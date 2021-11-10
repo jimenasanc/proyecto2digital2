@@ -592,4 +592,99 @@ void LCD_Sprite(int x, int y, int width, int height, unsigned char bitmap[], int
   digitalWrite(LCD_CS, HIGH);
 }
 
+//*****************************************************************************************
+//Universidad del Valle de Guatemala
+//BE3015: Electrónica Digital 2
+//Jimena Sánchez
+//Proyecto 2: Sensor HC-SR04 Ultrasonic 
+//*****************************************************************************************
 
+//*****************************************************************************************
+// Librerías
+//*****************************************************************************************
+
+//*****************************************************************************************
+//Definición de pines
+//*****************************************************************************************
+const int trigPin = 5;
+const int echoPin = 18;
+
+#define RX2 16
+#define TX2 17
+
+//velocidad de sonido cm/uS
+#define velocidad 0.034
+//*****************************************************************************************
+//Prototipos de funciones
+//*****************************************************************************************
+void sensorultra(void);
+
+//*****************************************************************************************
+//Variables Globales
+//*****************************************************************************************
+long duracionn;
+float distanciacm;
+String medicion = "";
+
+//int ActualState = ;
+int LastTime = 0;
+
+//*****************************************************************************************
+//ISR
+//*****************************************************************************************
+
+//*****************************************************************************************
+//Código de configuración
+//*****************************************************************************************
+
+void setup() {
+  Serial.begin(115200);
+  Serial2.begin(115200);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT); 
+}
+
+//*****************************************************************************************
+//Loop Principal
+//*****************************************************************************************
+
+void loop() {
+
+  if (Serial2.available()>0) {
+    int boton = Serial2.read(); //lee
+    //Serial.println(boton);
+    if (boton != LastTime) {
+      sensorultra();
+      }
+      LastTime = boton;  
+  }
+
+}
+//*****************************************************************************************
+//Funcion del Sensor
+//*****************************************************************************************
+void sensorultra(void){
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  // Enciende el trigger por los primeros 10ms
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // El pin echo convierte la onda a millis
+  duracionn = pulseIn(echoPin, HIGH);
+  
+  // Calcula la distancia
+  distanciacm = duracionn * velocidad/2;
+  
+  // Imprime la distancia 
+  Serial.print("Distancia (cm): ");
+  Serial.println(distanciacm);
+  
+  delay(1000); 
+
+  Serial2.println(distanciacm);
+ 
+ 
+  }
+  
